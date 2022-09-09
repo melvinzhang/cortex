@@ -1,7 +1,9 @@
 {{ $re := $.File.BaseFileName }}
+{{ $path_base := $.File.ContentBaseName }}
+{{ $path_base_re := printf `["/(]%s["/)]` $path_base }}
 {{ $backlinks := slice }}
 {{ range .Site.AllPages }}
-   {{ if and (findRE $re .RawContent) (not (eq $re .File.BaseFileName)) }}
+   {{ if and (findRE $path_base_re .RawContent 1) (not (eq $re .File.BaseFileName)) }}
       {{ $backlinks = $backlinks | append . }}
    {{ end }}
 {{ end }}
