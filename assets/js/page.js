@@ -57,8 +57,8 @@ function fetchNote(href, level) {
           element.dataset.level = level + 1;
           initializePage(element, level + 1);
           element.scrollIntoView();
-          if (window.MathJax) {
-            window.MathJax.typeset();
+          if (window.renderMathInElement) {
+            window.renderMathInElement(element);
           }
         }.bind(null, element, level),
         10
