@@ -4,7 +4,7 @@ function displayResults(results, store) {
     let resultList = "<h3 class='search-count'>" + results.length + " results found</h3>";
     // Iterate and build result list elements
     for (const n in results) {
-      const item = store[results[n].ref];
+      const item = results[n].item;
       resultList +=
         '<li><a href="' + item.url + '">' + item.title + "</a>";
       resultList += "<span class='search-extract'>" + item.content.substring(0, 100) + "...</span></li>";
@@ -24,30 +24,17 @@ if (query) {
   // Retain the search input in the form when displaying results
   document.getElementById("search-input").setAttribute("value", query);
 
-  console.log(window.store);
-
-  const idx = lunr(function () {
-    this.ref("id");
-    this.field("title", {
-      boost: 15,
-    });
-    this.field("tags");
-    this.field("content", {
-      boost: 10,
-    });
-
-    for (const key in window.store) {
-      this.add({
-        id: key,
-        title: window.store[key].title,
-        tags: window.store[key].category,
-        content: window.store[key].content,
-      });
-    }
+  const idx = new Fuse(window.store, {
+    minMatchCharLength: 3,
+ 	includeScore: true,
+	useExtendedSearch: true,
+	ignoreLocation: true,
+    keys: ['title', 'tags', 'content']
   });
 
   // Perform the search
-  const results = idx.search(query);
+  const results = idx.search(query, {limit: 100});
+  //console.log(results);
   // Update the list with results
   displayResults(results, window.store);
 }
